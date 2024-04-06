@@ -1,0 +1,1 @@
+In this project Im going to plot the rental situation of madrid using folium for the maps and streamlit for deployment

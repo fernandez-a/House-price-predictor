@@ -12,15 +12,15 @@ choice_map = st.selectbox("Select layer", ['Poblacion','Paro'])
 
 if choice_map == 'Poblacion':
     choice_layer = st.selectbox("Select layer", ['Districts', 'Neighbourhoods'])
-    data_ngh = pd.read_csv('./data/madrid/cleaned/popu_by_neighbourhood.csv')
-    data_dist = pd.read_csv('./data/madrid/cleaned/popu_by_district.csv')
+    data_ngh = pd.read_csv('./data/madrid/cleaned/paro_by_neighbourhood.csv')
+    data_dist = pd.read_csv('./data/madrid/cleaned/paro_by_district.csv')
     print(data_ngh.head())
     if choice_layer == 'Districts':
         folium.Choropleth(
                         geo_data='./data/gjson/distritos.geojson',
                         data=data_dist,
                         columns=['district', 'total'],
-                        key_on='feature.properties.DISTRI_MT',
+                        key_on='feature.properties.NOMBRE',
                         fill_color="YlGn",
                         fill_opacity=0.7,
                         line_opacity=.1,

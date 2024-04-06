@@ -1,119 +1,69 @@
-
 import streamlit as st
 import pandas as pd
 import folium as folium
 from streamlit_folium import folium_static
 
-m = folium.Map(location=[40.416775, -3.703790])
-choice_map = st.selectbox("Select layer", ['Poblacion','Paro'])
+def load_data():
+    popu_dist = pd.read_csv('./data/madrid/cleaned/popu_by_district.csv')
+    popu_ngh = pd.read_csv('./data/madrid/cleaned/popu_by_neighbourhood.csv')
+    
+    paro_ngh = pd.read_csv('./data/madrid/cleaned/paro_by_neighbourhood.csv')
+    paro_dist = pd.read_csv('./data/madrid/cleaned/paro_by_district.csv')
+    return popu_dist, popu_ngh, paro_ngh, paro_dist
 
+def create_map(data, geojson, key_on, field, legend_name, m):
+    folium.Choropleth(
+        geo_data=geojson,
+        data=data,
+        columns=['district', 'total'],
+        key_on=key_on,
+        fill_color="RdYlBu_r",
+        fill_opacity=0.7,
+        line_opacity=.1,
+        legend_name=legend_name).add_to(m)
 
-
-
-if choice_map == 'Poblacion':
-    choice_layer = st.selectbox("Select layer", ['Districts', 'Neighbourhoods'])
-    data_ngh = pd.read_csv('./data/madrid/cleaned/paro_by_neighbourhood.csv')
-    data_dist = pd.read_csv('./data/madrid/cleaned/paro_by_district.csv')
-    print(data_ngh.head())
-    if choice_layer == 'Districts':
-        folium.Choropleth(
-                        geo_data='./data/gjson/distritos.geojson',
-                        data=data_dist,
-                        columns=['district', 'total'],
-                        key_on='feature.properties.NOMBRE',
-                        fill_color="YlGn",
-                        fill_opacity=0.7,
-                        line_opacity=.1,
-                        legend_name="Population by District").add_to(m)
-
-        x = folium.GeoJson('./data/gjson/distritos.geojson',
-                        style_function=lambda feature: {
-                            'fillColor': None,
-                            'color': 'lightgrey',
-                            'weight': 2,
-                            'fillOpacity': 0,
-                        })
-
-        x.add_child(
-            folium.features.GeoJsonTooltip(fields=['NOMBRE'], sticky=True, labels=False),
-        )
-        x.add_to(m)
-        folium.LayerControl().add_to(m)
-
-    if choice_layer == 'Neighbourhoods':
-        folium.Choropleth(
-                        geo_data='./data/gjson/neighbourhoods.geojson',
-                        data=data_ngh,
-                        columns=['district', 'total'],
-                        key_on='feature.properties.NOMBRE',
-                        fill_color="YlGn",
-                        fill_opacity=0.7,
-                        line_opacity=.1,
-                        legend_name="Population by Neighbourhoods").add_to(m)
-
-        x = folium.GeoJson('./data/gjson/neighbourhoods.geojson',
+    x = folium.GeoJson(geojson,
                     style_function=lambda feature: {
                         'fillColor': None,
-                        'color': 'lightblue',
+                        'color': 'lightgrey',
                         'weight': 2,
                         'fillOpacity': 0,
                     })
-        x.add_child(
-            folium.features.GeoJsonTooltip(fields=['NOMBRE'], sticky=True, labels=False),
-        )
-        x.add_to(m)
-        folium.LayerControl().add_to(m)
 
-# if choice_map == 'Paro':
-#     data = pd.read_csv('./data/madrid/cleaned/paro_by_neighbourhood.csv')
-#     select_paro = st.selectbox("Select paro", ['Hombres', 'Mujeres', 'Ambos sexos'])
-#     select_layer = st.selectbox("Select layer", ['Neighbourhoods', 'Districts'])
-#     data = data[data['genre'] == select_paro]
+    x.add_child(
+        folium.features.GeoJsonTooltip(fields=[field], sticky=True, labels=False),
+    )
+    x.add_to(m)
+    folium.LayerControl().add_to(m)
 
-#     if select_layer == 'Neighbourhoods':
-#         folium.Choropleth(
-#                     geo_data='./data/gjson/neighbourhoods.geojson',
-#                     data=data,
-#                     columns=['district', 'total'],
-#                     key_on='feature.properties.NOMDIS',
-#                     fill_color="RdYlBu_r",
-#                     fill_opacity=0.7,
-#                     line_opacity=.1,
-#                     legend_name="{} Unemployment by Neighbourhood".format(select_paro),
-#                     ).add_to(m)
-#         x = folium.GeoJson('./data/gjson/neighbourhoods.geojson',
-#                         style_function=lambda feature: {
-#                             'fillColor': None,
-#                             'color': 'lightblue',
-#                             'weight': 2,
-#                             'fillOpacity': 0,
-#                         })
-#         x.add_child(
-#             folium.features.GeoJsonTooltip(fields=['NOMDIS'], sticky=True, labels=False),
-#         )
-#         x.add_to(m)
-#     if select_layer == 'Districts':
+def main():
+    m = folium.Map(location=[40.416775, -3.703790])
+    choice_map = st.selectbox("Select layer", ['Poblacion','Paro'])
+    popu_dist, popu_ngh, paro_ngh, paro_dist = load_data()
 
-#         folium.Choropleth(
-#                         geo_data='./data/gjson/distritos.geojson',
-#                         data=data,
-#                         columns=['district', 'total'],
-#                         key_on='feature.properties.NOMBRE',
-#                         fill_color="RdYlBu_r",
-#                         fill_opacity=0.7,
-#                         line_opacity=.1,
-#                         legend_name="{} Unemployment by District".format(select_paro)
-#                         ).add_to(m)
+    if choice_map == 'Poblacion':
+        choice_layer = st.selectbox("Select layer", ['Districts', 'Neighbourhoods'])
 
-#         x = folium.GeoJson('./data/gjson/distritos.geojson',
-#                     style_function=lambda feature: {
-#                         'fillColor': None,
-#                         'color': 'lightblue',
-#                         'weight': 2,
-#                         'fillOpacity': 0,
-#                     })
-#         x.add_child(
-#             folium.features.GeoJsonTooltip(fields=['NOMBRE'], sticky=True, labels=False),
-#         )
-#         x.add_to(m)
-folium_static(m, width=1000, height=800, )
+        if choice_layer == 'Districts':
+            create_map(popu_dist, './data/gjson/distritos.geojson', 'feature.properties.NOMBRE','NOMBRE',"Population by District", m)
+
+        if choice_layer == 'Neighbourhoods':
+            create_map(popu_ngh, './data/gjson/neighbourhoods.geojson', 'feature.properties.NOMBRE', 'NOMBRE' ,"Population by Neighbourhoods", m)
+
+    if choice_map == 'Paro':
+
+        choice_layer = st.selectbox("Select layer", ['Districts', 'Neighbourhoods'])
+        genre_paro = st.selectbox("Select paro", ['Hombres', 'Mujeres', 'Ambos sexos'])
+
+        paro_ngh = paro_ngh[paro_ngh['genre'] == genre_paro]
+        paro_dist = paro_ngh[paro_ngh['genre'] == genre_paro]
+
+        if choice_layer == 'Districts':
+            print(paro_dist)
+            create_map(paro_dist, './data/gjson/distritos.geojson', 'feature.properties.NOMBRE','NOMBRE', "Population by District", m)
+        if choice_layer == 'Neighbourhoods':
+            create_map(paro_ngh, './data/gjson/neighbourhoods.geojson', 'feature.properties.NOMBRE','NOMBRE', "Population by Neighbourhoods", m)
+    folium_static(m, width=1000, height=800, )
+
+if __name__ == "__main__":
+    main()

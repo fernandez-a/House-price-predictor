@@ -45,7 +45,7 @@ def main():
         choice_layer = st.selectbox("Select layer", ['Districts', 'Neighbourhoods'])
 
         if choice_layer == 'Districts':
-            create_map(popu_dist, './data/gjson/distritos.geojson', 'feature.properties.NOMBRE','NOMBRE',"Population by District", m)
+            create_map(popu_dist, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT','NOMBRE',"Population by District", m)
 
         if choice_layer == 'Neighbourhoods':
             create_map(popu_ngh, './data/gjson/neighbourhoods.geojson', 'feature.properties.NOMBRE', 'NOMBRE' ,"Population by Neighbourhoods", m)
@@ -55,13 +55,14 @@ def main():
         choice_layer = st.selectbox("Select layer", ['Districts', 'Neighbourhoods'])
         genre_paro = st.selectbox("Select paro", ['Hombres', 'Mujeres', 'Ambos sexos'])
 
-        paro_ngh = paro_ngh[paro_ngh['genre'] == genre_paro]
-        paro_dist = paro_ngh[paro_ngh['genre'] == genre_paro]
+        
 
         if choice_layer == 'Districts':
+            paro_dist = paro_dist[paro_dist['genre'] == genre_paro]
             print(paro_dist)
-            create_map(paro_dist, './data/gjson/distritos.geojson', 'feature.properties.NOMBRE','NOMBRE', "Population by District", m)
+            create_map(paro_dist, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT','NOMBRE', "Population by District", m)
         if choice_layer == 'Neighbourhoods':
+            paro_ngh = paro_ngh[paro_ngh['genre'] == genre_paro]
             create_map(paro_ngh, './data/gjson/neighbourhoods.geojson', 'feature.properties.NOMBRE','NOMBRE', "Population by Neighbourhoods", m)
     folium_static(m, width=1000, height=800, )
 

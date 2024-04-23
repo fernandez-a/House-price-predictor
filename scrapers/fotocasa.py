@@ -77,7 +77,7 @@ class Fotocasa:
                 bathrooms, floor, air_conditioner, heater, elevator, swimming_pool, rooms, surface, conservationState, garden, terrace, balcony, parking = self.get_features(features)
                 self.data.append([street,neighbourhood, district, latitud, longitud, zipcode, date, price, bathrooms, floor, air_conditioner, heater, elevator, swimming_pool, rooms, surface, conservationState, garden, terrace, balcony, parking])
         df = pd.DataFrame(self.data, columns=columns)
-        df.to_csv('../data/cleaned/fotocasa/fotocasa.csv', index=False)
+        df.to_csv('../data/madrid/cleaned/fotocasa/fotocasa.csv', index=False)
     def run(self):
         self.scrape_data()
         self.save_data()

@@ -30,10 +30,10 @@ if __name__ == "__main__":
     
     print('Reading GeoJSON...')
     start_time = time.time()
-    gdf = gpd.read_file('../data/gpkg/json/watches.json')
+    gdf = gpd.read_file('../data/gpkg/json/building.json')
     end_time = time.time()
     elapsed_time = end_time - start_time
     print('GeoJSON read in {:.2f} seconds'.format(elapsed_time))
     
     geolocator = GeolocateMarkers(districts, gdf)
-    geolocator.locate_points('../data/points/watches.csv')
+    geolocator.locate_points('../data/points/building.csv')

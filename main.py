@@ -70,6 +70,7 @@ class Map:
 class Main:
     def __init__(self):
         self.airbnb_data = AirbnbData('./data/airbnb/detail_listings.csv').data
+        self.housing_data = pd.read_csv('./data/madrid/cleaned/fotocasa_2023.csv')
         self.map = Map([40.416775, -3.703790])
 
     def main(self):
@@ -80,7 +81,7 @@ class Main:
         )
         layer = st.sidebar.selectbox(
             'Choose a layer',
-            ('Population', 'Unemployment', 'Airbnb')
+            ('Population', 'Unemployment', 'Airbnb','House Properties')
         )
             
         if option == 'District':
@@ -98,7 +99,7 @@ class Main:
                 unemployment['district'] = unemployment['district'].str.upper()
                 self.map = Map([40.416775, -3.703790])
                 self.map.create_map(unemployment, geojson_data, 'feature.properties.DISTRI_MT','NOMBRE',"Unemployment by District", columns=paro_columns)
-            if layer == 'Airbnb':
+            elif layer == 'Airbnb':
                 filter = st.sidebar.selectbox(
                     'Choose a filter',
                     ('Price', 'Number of Beds','Number of Reviews')
@@ -106,12 +107,13 @@ class Main:
                 airbnb_columns = ['district', 'total', 'num_rentals']
                 if filter == 'Price':
                     self.airbnb_data.to_csv('./data/madrid/cleaned/airbnb_prices_all.csv', index=False)                
-                    price_filter = st.slider('Price', int(self.airbnb_data['price_month'].min()), int(self.airbnb_data['price_month'].max()))
-                    priced_data = self.airbnb_data[(self.airbnb_data['price_month'] >= price_filter[0]) & (self.airbnb_data['price_month'] <= price_filter[1])]
-                    priced_data_group = self.grouped_airbnb_prices(priced_data)
-                    priced_data_group.to_csv('./data/madrid/cleaned/airbnb_prices.csv', index=False)
+                   
+                    priced_data_group = self.grouped_airbnb_prices(self.airbnb_data)
+                    price_filter = st.slider('Price', priced_data_group['total'].min(), priced_data_group['total'].max())
+                    #priced_data = self.airbnb_data[(self.airbnb_data['price_month'] >= price_filter[0]) & (self.airbnb_data['price_month'] <= price_filter[1])]
+                    # priced_data_group.to_csv('./data/madrid/cleaned/airbnb_prices.csv', index=False)
                     self.map = Map([40.416775, -3.703790])
-                    self.map.add_markers(priced_data)
+                    #self.map.add_markers(priced_data)
                     self.map.create_map(priced_data_group, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT', 'NOMBRE' ,"Airbnb prices by District", airbnb_columns)
 
                 elif filter == 'Number of Beds':
@@ -131,13 +133,17 @@ class Main:
                     self.map = Map([40.416775, -3.703790])
                     self.map.add_markers(review_data)
                     self.map.create_map(review_group, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT', 'NOMBRE' ,"Number of reviews by District", airbnb_columns)
-
+            elif layer == 'House Properties':
+                house_columns = ['district', 'price']
+                fotocasa_group = self.group_fotocasa('district')
+                print(fotocasa_group)
+                self.map = Map([40.416775, -3.703790])
+                self.map.create_map(fotocasa_group, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT', 'NOMBRE' ,"House prices by District", house_columns)
         else:           
             geojson_data = './data/gjson/neighbourhoods.geojson'
             self.map.load_gjson(geojson_data, 'NOMBRE')
             if layer == 'Population':
                 
-
                 pop_columns = ['district','total']
                 population_nh = pd.read_csv('./data/madrid/cleaned/popu_by_neighbourhood.csv')
                 self.map = Map([40.416775, -3.703790])
@@ -152,6 +158,13 @@ class Main:
                 print(unemployment_nh.total.max())
                 self.map = Map([40.416775, -3.703790])
                 self.map.create_map(unemployment_nh, geojson_data, 'feature.properties.NOMBRE', 'NOMBRE' ,"Unemployment by Neighbourhoods", columns=paro_columns)
+        
+            elif layer == 'House Properties':
+                house_columns = ['neighbourhood', 'price']
+                fotocasa_group = self.group_fotocasa('neighbourhood')
+                print(fotocasa_group)
+                self.map = Map([40.416775, -3.703790])
+                self.map.create_map(fotocasa_group, geojson_data, 'feature.properties.BARRIO_MT', 'BARRIO_MT' ,"House prices by Neighbourhoods", house_columns)
         self.map.display()
 
     def grouped_airbnb_prices(self, data):
@@ -166,6 +179,10 @@ class Main:
         neighbourhoods['district'] = neighbourhoods['district'].str.upper()
         return neighbourhoods
 
+    def group_fotocasa(self, key):
+        self.housing_data[key] = self.housing_data[key].str.upper()
+        self.housing_data.columns = self.housing_data.columns.str.lower()
+        return self.housing_data.groupby(key).agg({'price': 'mean'}).reset_index()
 
     def create_map(data, geojson, key_on, field, legend_name, m):
         folium.Choropleth(

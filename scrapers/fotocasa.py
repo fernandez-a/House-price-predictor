@@ -3,6 +3,7 @@ import json
 from bs4 import BeautifulSoup
 from time import sleep
 import pandas as pd
+import datetime
 
 class Fotocasa:
     headers = {
@@ -59,7 +60,7 @@ class Fotocasa:
         return bathrooms, floor, air_conditioner, heater, elevator, swimming_pool, rooms, surface, conservationState, garden, terrace, balcony, parking
 
     def save_data(self):
-        columns = ['address','neighbourhood', 'district', 'latitud', 'longitud', 'zipcode', 'date', 'price', 'bathrooms','floor','air_conditioner','heater','elevator','swimming_pool','rooms','surface','conservationState','garden','terrace','balcony','parking']
+        columns = ['address','neighbourhood', 'district', 'latitud', 'longitud', 'zipcode', 'date','scraped_date', 'price', 'bathrooms','floor','air_conditioner','heater','elevator','swimming_pool','rooms','surface','conservationState','garden','terrace','balcony','parking']
         for i in self.properties:
             for j in i: 
                 feature_dict = []
@@ -74,8 +75,9 @@ class Fotocasa:
                 zipcode = address['zipCode']
                 date = j['date']
                 price = j['transactions'][0]['value'][0]
+                scraped_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 bathrooms, floor, air_conditioner, heater, elevator, swimming_pool, rooms, surface, conservationState, garden, terrace, balcony, parking = self.get_features(features)
-                self.data.append([street,neighbourhood, district, latitud, longitud, zipcode, date, price, bathrooms, floor, air_conditioner, heater, elevator, swimming_pool, rooms, surface, conservationState, garden, terrace, balcony, parking])
+                self.data.append([street,neighbourhood, district, latitud, longitud, zipcode, date,scraped_date,price, bathrooms, floor, air_conditioner, heater, elevator, swimming_pool, rooms, surface, conservationState, garden, terrace, balcony, parking])
         df = pd.DataFrame(self.data, columns=columns)
         df.to_csv('../data/madrid/cleaned/fotocasa/fotocasa_24_4.csv', index=False)
     def run(self):

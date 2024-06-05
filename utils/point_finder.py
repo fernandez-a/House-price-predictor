@@ -1,6 +1,5 @@
 import pandas as pd
 from shapely.geometry import Point
-from geopy.distance import geodesic
 from tqdm import tqdm
 
 class PointFinder:

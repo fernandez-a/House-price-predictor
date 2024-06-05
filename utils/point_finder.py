@@ -20,11 +20,12 @@ class PointFinder:
         output_file (str): The path to the output file.
     """
 
-    def __init__(self, cluster_radius, housing_file, points_file, output_file):
+    def __init__(self, cluster_radius, housing_file, points_file, output_file, category):
         self.cluster_radius = cluster_radius
         self.housing_file = housing_file
         self.points_file = points_file
         self.output_file = output_file
+        self.category = category
 
     def find_points(self):
         """
@@ -35,7 +36,7 @@ class PointFinder:
         df_housing['id'] = df_housing.index
         df_housing['point'] = df_housing.apply(lambda x: Point(x['longitude'], x['latitude']), axis=1)
         points_raw = pd.read_csv(self.points_file)
-        df_category = points_raw[points_raw['category'] == 'doctors'] # Specify the category here
+        df_category = points_raw[points_raw['category'] == self.category]
         df_final = []
         df_category = df_category.to_dict('records')
 
@@ -55,8 +56,9 @@ class PointFinder:
 
 
 if __name__ == "__main__":
-    doctors = PointFinder(cluster_radius=500,
+    finder = PointFinder(cluster_radius=500,
                             housing_file='../data/madrid/cleaned/fotocasa/fotocasa_2023_located.csv',
-                            points_file='../data/points/amenity.csv',
-                            output_file='../data/points/points_count/housing_doctors.csv')
-    doctors.find_points()
+                            points_file='../data/points/pharmacies_located.csv',
+                            output_file='../data/points/points_count/housing_pharmacies.csv',
+                            category='pharmacy')
+    finder.find_points()

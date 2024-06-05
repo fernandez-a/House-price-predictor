@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-from airbnbdata import AirbnbData
-from map_utils import Map
+from utils.airbnbdata import AirbnbData
+from utils.map_utils import Map
 
 class MapPage:
     def __init__(self):
@@ -25,13 +25,15 @@ class MapPage:
             )   
             if layer == 'Population':
                 pop_columns = ['district','total']
-                population = pd.read_csv('./data/madrid/cleaned/popu_by_district.csv')
+                population = pd.read_csv('./data/madrid/cleaned/total_by_district.csv')
                 population['district'] = population['district'].str.upper()
                 self.map.create_map(population, geojson_data, 'feature.properties.DISTRI_MT','NOMBRE',"Population by District", columns=pop_columns)
             
             elif layer == 'Unemployment':
+                genre = st.selectbox("Select genre", ['Hombres', 'Mujeres', 'Ambos sexos'])
                 paro_columns = ['district','total']
                 unemployment = pd.read_csv('./data/madrid/cleaned/paro_by_district.csv')
+                unemployment = unemployment[unemployment['genre'] == genre]
                 unemployment['district'] = unemployment['district'].str.upper()
                 self.map.create_map(unemployment, geojson_data, 'feature.properties.DISTRI_MT','NOMBRE',"Unemployment by District", columns=paro_columns)
             
@@ -49,14 +51,6 @@ class MapPage:
                     priced_data = priced_data_group[priced_data_group['total'] <= price_filter]
                     self.map.create_map(priced_data, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT', 'NOMBRE' ,"Airbnb prices by District", airbnb_columns)
 
-                # elif filter == 'Number of Reviews':
-                #     review_filter = st.slider('Number of Reviews', self.airbnb_data['number_of_reviews'].min(), self.airbnb_data['number_of_reviews'].max(), (self.airbnb_data['number_of_reviews'].min(), self.airbnb_data['number_of_reviews'].max()))
-                #     review_data = self.airbnb_data[(self.airbnb_data['number_of_reviews'] >= review_filter[0]) & (self.airbnb_data['number_of_reviews'] <= review_filter[1])]
-                #     review_group = self.group_rentals(review_data)
-                #     #self.map.add_markers(review_data)
-                #     #print(review_group)
-                #     self.map.create_map(review_group, './data/gjson/distritos.geojson', 'feature.properties.DISTRI_MT', 'NOMBRE' ,"Number of reviews by District", ['district', 'num_rentals'])
-            
             elif layer == 'House Properties':
                 house_columns = ['district', 'price']
                 fotocasa_group = self.group_fotocasa('district')
@@ -69,14 +63,14 @@ class MapPage:
             ('Population', 'Unemployment','House Properties')
             )   
             if layer == 'Population':
-                pop_columns = ['neighbourhood','total']
-                population_nh = pd.read_csv('./data/madrid/cleaned/popu_by_neighbourhood_raw.csv')
+                pop_columns = ['neigbourhood','total']
+                population_nh = pd.read_csv('./data/madrid/cleaned/total_by_neighbourhood.csv')
                 self.map.create_map(population_nh, geojson_data, 'feature.properties.NOMBRE', 'NOMBRE' ,"Population by Neighbourhoods", columns=pop_columns)
         
             elif layer == 'Unemployment':
                 genre = st.selectbox("Select genre", ['Hombres', 'Mujeres', 'Ambos sexos'])
                 paro_columns = ['neighbourhood','total']
-                unemployment_nh = pd.read_csv('./data/madrid/cleaned/paro_by_neighbourhood_raw.csv')
+                unemployment_nh = pd.read_csv('./data/madrid/cleaned/paro_by_neighbourhood.csv')
                 unemployment_nh = unemployment_nh[unemployment_nh['genre'] == genre]
                 self.map.create_map(unemployment_nh, geojson_data, 'feature.properties.NOMBRE', 'NOMBRE' ,"Unemployment by Neighbourhoods - " + genre, columns=paro_columns)
         

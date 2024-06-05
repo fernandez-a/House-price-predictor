@@ -13,7 +13,7 @@ for file in csv_files:
     pattern = re.compile("\d{2}._")
     columns_to_drop = [col for col in total.columns if pattern.match(col)]
     total = total.drop(columns=columns_to_drop)
-    total.columns = ['_'.join(col.split('_')[1:]).capitalize() for col in total.columns]
+    total.columns = ['_'.join(col.split('_')[1:]).title() for col in total.columns]
     total.columns = [col.rstrip('_') for col in total.columns]
     
     total_values = pd.DataFrame(total.sum())

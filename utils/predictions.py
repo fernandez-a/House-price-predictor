@@ -2,6 +2,7 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 import pickle
+import re
 from shapely.geometry import Point
 from utils.map_utils import Map
 import numpy as np
@@ -9,6 +10,7 @@ import json
 import pandas as pd
 class Predictions():
     def main(self):
+        st.title('Predictions Page')
         st.write('Fill in the information about the property to get the price prediction')
 
         st.write('*Note: fill the coordinates following the format: latitude, longitude*')
@@ -16,27 +18,20 @@ class Predictions():
         error = False
         with col1:
             zipcode = st.text_input('Zipcode')
-            if zipcode.isalpha():
+            if zipcode and not re.match("^[0-9]+$", zipcode):
                 st.error('Zipcode should only contain numbers')
                 error = True
-            
-            elif len(zipcode) != 5 and zipcode:
-                st.error('Zipcode should have 5 digits')
-                error = True
             coordinates = st.text_input('Coordinates')
-            if ',' not in coordinates and coordinates:
+            if coordinates and not re.match("^[-+]?[0-9]*\.?[0-9]+,[-+]?[0-9]*\.?[0-9]+$", coordinates):
                 error = True
                 st.error('Coordinates should be in the format: latitude, longitude')
             elif len(coordinates.split(',')) != 2 and coordinates:
                 error = True
                 st.error('Coordinates should be in the format: latitude, longitude')
             rooms = st.text_input('Rooms')
-            if rooms.isalpha():
+            if rooms and not re.match("^[0-9]+$", rooms):
                 error = True
                 st.error('Rooms should only contain numbers')
-            elif '.' in rooms:
-                error = True
-                st.error('Rooms should be an integer')
             bathrooms = st.text_input('Bathrooms')
             if bathrooms.isalpha():
                 error = True
@@ -45,25 +40,18 @@ class Predictions():
                 error = True
                 st.error('Bathrooms should be an integer')
             floors = st.text_input('Floor')
-            if floors.isalpha():
+            if floors and not re.match("^[0-9]+$", floors):
                 error = True
                 st.error('Floor should only contain numbers')
-            elif '.' in floors:
-                error = True
-                st.error('Floor should be an integer')
             swimming_pool = st.selectbox('Swimming Pool', ['Yes', 'No'])
             neighbourhood = st.text_input('Neighbourhood')
-            if neighbourhood.isnumeric():
+            if neighbourhood and not re.match("^[a-zA-Z]+$", neighbourhood):
                 error = True
                 st.error('Neighbourhood should only contain letters')
             surface = st.text_input('Surface')
-            if surface.isalpha():
+            if surface and not re.match("^[0-9]+$", surface):
                 error = True
                 st.error('Surface should only contain numbers')
-            elif '.' in surface and surface:
-                error = True
-                st.error('Surface should be a float')
-
         with col2:
             elevator = st.selectbox('Elevator', ['Yes', 'No'])
             air_conditioner = st.selectbox('Air Conditioner', ['Yes', 'No'])
@@ -72,7 +60,7 @@ class Predictions():
             balcony = st.selectbox('Balcony', ['Yes', 'No'])
             terrace = st.selectbox('Terrace', ['Yes', 'No'])
             district = st.text_input('District')
-            if district.isnumeric():
+            if district and not re.match("^[a-zA-Z]+$", district):
                 error = True
                 st.error('District should only contain letters')
             
@@ -90,13 +78,13 @@ class Predictions():
         if district_encoded in district_mapping:
             district_encoded = district_mapping[district]
             district_encoded = str(district_encoded)
-        else:
+        elif district and district_encoded not in district_mapping:
             st.error('Invalid district')
         neighbourhood_encoded = neighbourhood.title()
         if neighbourhood_encoded in neighbourhood_mapping:
             neighbourhood_encoded = neighbourhood_mapping[neighbourhood_encoded]
             neighbourhood_encoded = str(neighbourhood_encoded)
-        else:
+        elif neighbourhood and neighbourhood_encoded not in neighbourhood_mapping:
             st.error('Invalid neighbourhood')
         
         features_list = [zipcode, coordinates, rooms, bathrooms, floors, swimming_pool, elevator, air_conditioner, heater, parking, balcony, terrace, district_encoded, neighbourhood_encoded, surface]

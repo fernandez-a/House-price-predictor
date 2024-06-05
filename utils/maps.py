@@ -10,6 +10,7 @@ class MapPage:
         self.map = Map([40.416775, -3.703790])
 
     def main(self):
+        st.title('Maps Visualizations')
         st.sidebar.header('Map options')
         option = st.sidebar.selectbox(
             'Choose an option',
@@ -38,10 +39,8 @@ class MapPage:
                 self.map.create_map(unemployment, geojson_data, 'feature.properties.DISTRI_MT','NOMBRE',"Unemployment by District", columns=paro_columns)
             
             elif layer == 'Airbnb':
-                filter = st.sidebar.selectbox(
-                    'Choose a filter',
-                    ('Price')
-                )
+                #click the price button to filter by price
+                filter = st.selectbox("Filter by", ['Price'])
                 airbnb_columns = ['district', 'total', 'num_rentals']
 
                 if filter == 'Price':

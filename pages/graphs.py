@@ -32,9 +32,18 @@ class Visualizations:
         sns.histplot(data=self.data[self.data['Price'] < 500000], x='Price', bins=100, kde=True)
         st.pyplot(fig)
 
+
+        fig = plt.figure(figsize=(10,5))
+        plt.title('This graph shows when the ad were published.')
+        self.data['Date'] = pd.to_datetime(self.data['Date'])
+        sns.histplot(data=self.data, x='Date', bins=100, kde=True)
+        st.pyplot(fig)
+       
+
         ## sq2m prices by district
         st.write('This graph shows the evolution of the price per square meter in Madrid by district and month.')
         self.animate_plot(x='month_n', y='price', animation_frame='district', color='año', title = 'Sq2m Prices by district')
+        
         
 if __name__ == '__main__':
     Visualizations().main()

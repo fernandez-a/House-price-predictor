@@ -1,6 +1,6 @@
-from utils.maps import MapPage
-from utils.graphs import Visualizations
-from utils.predictions import Predictions
+from pages.maps import MapPage
+from pages.graphs import Visualizations
+from pages.predictions import Predictions
 import streamlit as st
 
 class Main:

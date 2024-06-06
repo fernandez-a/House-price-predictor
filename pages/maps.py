@@ -39,7 +39,6 @@ class MapPage:
                 self.map.create_map(unemployment, geojson_data, 'feature.properties.DISTRI_MT','NOMBRE',"Unemployment by District", columns=paro_columns)
             
             elif layer == 'Airbnb':
-                #click the price button to filter by price
                 filter = st.selectbox("Filter by", ['Price'])
                 airbnb_columns = ['district', 'total', 'num_rentals']
 

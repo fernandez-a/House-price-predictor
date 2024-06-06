@@ -34,7 +34,7 @@ class Visualizations:
 
 
         fig = plt.figure(figsize=(10,5))
-        plt.title('This graph shows when the ad were published.')
+        plt.title('This graph shows the distribution of ads date of publication.')
         self.data['Date'] = pd.to_datetime(self.data['Date'])
         sns.histplot(data=self.data, x='Date', bins=100, kde=True)
         st.pyplot(fig)

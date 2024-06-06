@@ -14,56 +14,57 @@ class Predictions():
         st.write('Fill in the information about the property to get the price prediction')
 
         st.write('*Note: fill the coordinates following the format: latitude, longitude*')
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         error = False
         with col1:
             zipcode = st.text_input('Zipcode')
             if zipcode and not re.match("^[0-9]+$", zipcode):
                 st.error('Zipcode should only contain numbers')
                 error = True
+            elif len(zipcode) != 5 and zipcode:
+                error = True
+                st.error('Zipcode should have 5 digits')
             coordinates = st.text_input('Coordinates')
-            if coordinates and not re.match("^[-+]?[0-9]*\.?[0-9]+,[-+]?[0-9]*\.?[0-9]+$", coordinates):
+            if coordinates and not re.match("^[-+]?[0-9]*\.?[0-9]+\s*,\s*[-+]?[0-9]*\.?[0-9]+$", coordinates):
                 error = True
                 st.error('Coordinates should be in the format: latitude, longitude')
+
             elif len(coordinates.split(',')) != 2 and coordinates:
                 error = True
                 st.error('Coordinates should be in the format: latitude, longitude')
+            terrace = st.selectbox('Terrace', ['Yes', 'No'])
+            surface = st.text_input('Surface')
+            if surface and not re.match("^[0-9]+$", surface):
+                error = True
+                st.error('Surface should only contain numbers')
+            floors = st.text_input('Floor')
+            if floors and not re.match("^[0-9]+$", floors):
+                error = True
+                st.error('Floor should only contain numbers')
+        with col2:
             rooms = st.text_input('Rooms')
             if rooms and not re.match("^[0-9]+$", rooms):
                 error = True
                 st.error('Rooms should only contain numbers')
             bathrooms = st.text_input('Bathrooms')
-            if bathrooms.isalpha():
+            if bathrooms and not re.match("^[0-9]+$", bathrooms):
                 error = True
                 st.error('Bathrooms should only contain numbers')
-            elif '.' in bathrooms:
-                error = True
-                st.error('Bathrooms should be an integer')
-            floors = st.text_input('Floor')
-            if floors and not re.match("^[0-9]+$", floors):
-                error = True
-                st.error('Floor should only contain numbers')
             swimming_pool = st.selectbox('Swimming Pool', ['Yes', 'No'])
+            balcony = st.selectbox('Balcony', ['Yes', 'No'])
             neighbourhood = st.text_input('Neighbourhood')
             if neighbourhood and not re.match("^[a-zA-Z]+$", neighbourhood):
                 error = True
                 st.error('Neighbourhood should only contain letters')
-            surface = st.text_input('Surface')
-            if surface and not re.match("^[0-9]+$", surface):
-                error = True
-                st.error('Surface should only contain numbers')
-        with col2:
+        with col3:
             elevator = st.selectbox('Elevator', ['Yes', 'No'])
             air_conditioner = st.selectbox('Air Conditioner', ['Yes', 'No'])
             heater = st.selectbox('Heater', ['Yes', 'No'])
             parking = st.selectbox('Parking', ['Yes', 'No'])
-            balcony = st.selectbox('Balcony', ['Yes', 'No'])
-            terrace = st.selectbox('Terrace', ['Yes', 'No'])
             district = st.text_input('District')
             if district and not re.match("^[a-zA-Z]+$", district):
                 error = True
                 st.error('District should only contain letters')
-            
         button = st.button('Predict Price')
 
         map = folium.Map(location=['40.429820573538464', '-3.6753164315647533'], zoom_start=12)
@@ -115,7 +116,7 @@ class Predictions():
             ).add_to(map)
         elif (button and not all(features_list)) or error == True:
             st.error('Please fill in all the fields in the correct format')
-        folium_static(map, width=700, height=600)
+        folium_static(map, width=700, height=300)
 
     def construct_data(self, data):
         data = [int(x) if x.isdigit() else x for x in data]

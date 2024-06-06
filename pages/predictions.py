@@ -91,7 +91,6 @@ class Predictions():
         features_list = [zipcode, coordinates, rooms, bathrooms, floors, swimming_pool, elevator, air_conditioner, heater, parking, balcony, terrace, district_encoded, neighbourhood_encoded, surface]
         
         if button and all(features_list) and error == False:
-            print('Button clicked')
             latitude, longitude = coordinates.split(',')
             features_list.append(latitude)
             features_list.append(longitude)

@@ -46,5 +46,5 @@ The tutor for this application was @carlosmanza the mark obtain was 9.52 out of 
 
 
 ## Deploy
-![Prediction options](./images/predictions_page.png)
-![Predicted price](./images/predicted_price.png)
+![Prediction options](images/predictions_page.png)
+![Predicted price](images/predicted_price.png)

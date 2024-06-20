@@ -46,5 +46,6 @@ The tutor for this application was @carlosmanza the mark obtain was 9.52 out of 
 
 
 ## Deploy
-![Prediction options](images/predictions_page.png)
-![Predicted price](images/predicted_price.png)
+We can see the housing options that will be used to predict
+<img src="images/predictions_page.png" alt="Prediction options">
+<img src="images/predicted_price.png" alt="Predicted price">

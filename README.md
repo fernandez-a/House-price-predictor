@@ -42,7 +42,7 @@ Data available upon request
 ## Notebooks
 The notebooks/ directory contains Jupyter notebooks that were used for data preparation and exploration. They can be viewed for a more in-depth look at the data and the steps taken to clean and process it for use in the application.
 
-The tutor for this application was @carlosmanza the mark obtain was 9.52 out of 10
+The tutor for this application was @carlosmanza the mark obtain was **9.52** out of **10**
 
 
 ## Deploy

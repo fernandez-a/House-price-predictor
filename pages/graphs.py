@@ -13,6 +13,7 @@ class Visualizations:
     def __init__(self):
         self.sq2m = pd.read_csv('./data/madrid/cleaned/sq2_madrid_monthly.csv')
         self.data = pd.read_csv('./data/madrid/cleaned/fotocasa_2023.csv')
+    
     def animate_plot(self, x, y, animation_frame, color, title):
         fig = px.line(self.sq2m, x=x, y=y, animation_frame=animation_frame, color=color, title=title)
         
@@ -38,11 +39,14 @@ class Visualizations:
         self.data['Date'] = pd.to_datetime(self.data['Date'])
         sns.histplot(data=self.data, x='Date', bins=100, kde=True)
         st.pyplot(fig)
-       
+ 
+        html_file_path = "./data/html/evolution_by_month.html"
+        with open(html_file_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
 
-        ## sq2m prices by district
-        st.write('This graph shows the evolution of the price per square meter in Madrid by district and month.')
-        self.animate_plot(x='month_n', y='price', animation_frame='district', color='año', title = 'Sq2m Prices by district')
+        
+        st.components.v1.html(html_content, height=800, scrolling=True)
+
         
         
 if __name__ == '__main__':

@@ -227,3 +227,6 @@ class Predictions():
                     airbnb_count +=1
         df_housing['count_airbnb_500'] = airbnb_count
         return df_housing
+
+if __name__ == '__main__':
+    Predictions().main()
